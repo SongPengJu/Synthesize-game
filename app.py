@@ -271,7 +271,7 @@ class GameProcessor(VideoTransformerBase):
         img = frame.to_ndarray(format="bgr24")
         # 强制将图像缩放到 1280x720，防止因分辨率变化导致球体大小比例失调
         # 同时也保证了物理引擎（重力、速度）在不同设备上的手感一致
-        img = cv2.resize(img, (1280, 720))
+        img = cv2.resize(img, (640, 480))
         img = cv2.flip(img, 1)
         H, W = img.shape[:2] 
         
@@ -422,10 +422,14 @@ webrtc_streamer(
     key="Synthesize-game",
     video_processor_factory=GameProcessor,
     rtc_configuration={ 
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]},
+                        {"urls": ["stun:stun1.l.google.com:19302"]},
+                        {"urls": ["stun:stun2.l.google.com:19302"]},
+                        {"urls": ["stun:stun.hw.qq.com:3478"]}, # 尝试国内腾讯的STUN
+                        ]
     },
     media_stream_constraints={
-        "video": {"width": 1280, "height": 720}, # 请求高清分辨率
+        "video": {"width": 640, "height": 480}, # 请求高清分辨率
         "audio": False
     },
     mode=WebRtcMode.SENDRECV,
